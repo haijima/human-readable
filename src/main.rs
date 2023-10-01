@@ -9,8 +9,8 @@ fn main() {
 const BASE: f64 = 1024f64;
 const UNITS: [&str; 8] = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB"];
 
-pub fn human_readable<T: Into<f64>>(bytes: T) -> String {
-    let mut size = bytes.into();
+pub fn human_readable<T: Into<u32>>(bytes: T) -> String {
+    let mut size = bytes.into() as f64;
     for unit in UNITS {
         if size < BASE {
             let s = format!("{:.1}", size)
