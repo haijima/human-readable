@@ -1,9 +1,19 @@
+use clap::Parser;
+use clap_verbosity_flag::{InfoLevel, Verbosity};
+
+#[derive(Debug, Parser)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+    #[command(flatten)]
+    verbose: Verbosity<InfoLevel>,
+
+    /// byte size
+    number: u32,
+}
+
 fn main() {
-    println!("{}", human_readable(0));
-    println!("{}", human_readable(550));
-    println!("{}", human_readable(563_200));
-    println!("{}", human_readable(681_574_400));
-    println!("{}", human_readable(123_456_789));
+    let cli = Cli::parse();
+    println!("{}", human_readable(cli.number));
 }
 
 const BASE: f64 = 1024f64;
