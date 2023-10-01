@@ -1,3 +1,4 @@
+use std::io::{BufRead, BufReader, stdin};
 use clap::Parser;
 use clap_verbosity_flag::{InfoLevel, Verbosity};
 
@@ -6,14 +7,29 @@ use clap_verbosity_flag::{InfoLevel, Verbosity};
 struct Cli {
     #[command(flatten)]
     verbose: Verbosity<InfoLevel>,
-
-    /// byte size
-    number: u32,
 }
 
 fn main() {
-    let cli = Cli::parse();
-    println!("{}", human_readable(cli.number));
+    Cli::parse();
+    read(BufReader::new(stdin().lock()));
+}
+
+fn read<R: BufRead>(buf_reader: R) {
+    for line in buf_reader.lines() {
+        println!("{}", line
+            .unwrap()
+            .split('\t')
+            .enumerate()
+            .map(|(i, c)|
+                match (i, c.parse::<u32>()) {
+                    (0, Ok(n)) => human_readable(n),
+                    (0, Err(_)) => c.to_string(),
+                    (_, _) => c.to_string(),
+                }
+            )
+            .collect::<Vec<_>>()
+            .join("\t"));
+    }
 }
 
 const BASE: f64 = 1024f64;
