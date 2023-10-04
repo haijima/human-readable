@@ -7,28 +7,35 @@ use clap_verbosity_flag::{InfoLevel, Verbosity};
 struct Cli {
     #[command(flatten)]
     verbose: Verbosity<InfoLevel>,
+
+    /// separator
+    #[arg(short, long, default_value = "\t")]
+    separator: String,
+
+    /// target column
+    #[arg(short, long, default_value = "1")]
+    target: u8,
 }
 
 fn main() {
-    Cli::parse();
-    read(BufReader::new(stdin().lock()));
+    let cli = Cli::parse();
+    read(BufReader::new(stdin().lock()), &cli.separator, cli.target);
 }
 
-fn read<R: BufRead>(buf_reader: R) {
+fn read<R: BufRead>(buf_reader: R, separator: &str, t: u8) {
     for line in buf_reader.lines() {
         println!("{}", line
             .unwrap()
-            .split('\t')
+            .split(separator)
             .enumerate()
             .map(|(i, c)|
-                match (i, c.parse::<u32>()) {
-                    (0, Ok(n)) => human_readable(n),
-                    (0, Err(_)) => c.to_string(),
-                    (_, _) => c.to_string(),
+                match c.parse::<u32>() {
+                    Ok(n) => if i as u8 + 1 == t { human_readable(n) } else { c.to_string() },
+                    Err(_) => c.to_string(),
                 }
             )
             .collect::<Vec<_>>()
-            .join("\t"));
+            .join(separator));
     }
 }
 
