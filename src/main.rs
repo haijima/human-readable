@@ -40,7 +40,8 @@ fn read<R: BufRead>(buf_reader: R, separator: &str, t: u8) {
 }
 
 const BASE: f64 = 1024f64;
-const UNITS: [&str; 8] = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB"];
+// const UNITS: [&str; 8] = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB"];
+const UNITS: [&str; 8] = ["B", "K", "M", "G", "T", "P", "E", "Z"];
 
 pub fn human_readable<T: Into<u32>>(bytes: T) -> String {
     let mut size = bytes.into() as f64;
@@ -49,9 +50,9 @@ pub fn human_readable<T: Into<u32>>(bytes: T) -> String {
             let s = format!("{:.1}", size)
                 .trim_end_matches(".0")
                 .to_string();
-            return format!("{} {}", s, unit);
+            return format!("{}{}", s, unit);
         }
         size /= BASE;
     }
-    format!("{:.1} {}", size, "YiB")
+    format!("{:.1}{}", size, "Y")
 }
