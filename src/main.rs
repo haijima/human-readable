@@ -1,6 +1,6 @@
-use std::io::{BufRead, BufReader, stdin};
 use clap::Parser;
 use clap_verbosity_flag::{InfoLevel, Verbosity};
+use std::io::{stdin, BufRead, BufReader};
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
@@ -24,18 +24,23 @@ fn main() {
 
 fn read<R: BufRead>(buf_reader: R, separator: &str, t: u8) {
     for line in buf_reader.lines() {
-        println!("{}", line
-            .unwrap()
-            .split(separator)
-            .enumerate()
-            .map(|(i, c)|
-                match c.parse::<u32>() {
-                    Ok(n) => if i as u8 + 1 == t { human_readable(n) } else { c.to_string() },
+        println!(
+            "{}",
+            line.unwrap()
+                .split(separator)
+                .enumerate()
+                .map(|(i, c)| match c.parse::<u32>() {
+                    Ok(n) =>
+                        if i as u8 + 1 == t {
+                            human_readable(n)
+                        } else {
+                            c.to_string()
+                        },
                     Err(_) => c.to_string(),
-                }
-            )
-            .collect::<Vec<_>>()
-            .join(separator));
+                })
+                .collect::<Vec<_>>()
+                .join(separator)
+        );
     }
 }
 
@@ -47,9 +52,7 @@ pub fn human_readable<T: Into<u32>>(bytes: T) -> String {
     let mut size = bytes.into() as f64;
     for unit in UNITS {
         if size < BASE {
-            let s = format!("{:.1}", size)
-                .trim_end_matches(".0")
-                .to_string();
+            let s = format!("{:.1}", size).trim_end_matches(".0").to_string();
             return format!("{}{}", s, unit);
         }
         size /= BASE;
