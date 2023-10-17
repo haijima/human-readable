@@ -8,30 +8,30 @@ struct Cli {
     #[command(flatten)]
     verbose: Verbosity<InfoLevel>,
 
-    /// separator
+    /// Use <DELIMITER> as the field delimiter
     #[arg(short, long, default_value = "\t")]
-    separator: String,
+    delimiter: String,
 
-    /// target column
+    /// Specify which fields to convert to human readable format
     #[arg(short, long, default_value = "1")]
-    target: u8,
+    fields: u8,
 }
 
 fn main() {
     let cli = Cli::parse();
-    read(BufReader::new(stdin().lock()), &cli.separator, cli.target);
+    read(BufReader::new(stdin().lock()), &cli.delimiter, cli.fields);
 }
 
-fn read<R: BufRead>(buf_reader: R, separator: &str, t: u8) {
+fn read<R: BufRead>(buf_reader: R, delimiter: &str, fields: u8) {
     for line in buf_reader.lines() {
         println!(
             "{}",
             line.unwrap()
-                .split(separator)
+                .split(delimiter)
                 .enumerate()
                 .map(|(i, c)| match c.parse::<u32>() {
                     Ok(n) =>
-                        if i as u8 + 1 == t {
+                        if i as u8 + 1 == fields {
                             human_readable(n)
                         } else {
                             c.to_string()
@@ -39,7 +39,7 @@ fn read<R: BufRead>(buf_reader: R, separator: &str, t: u8) {
                     Err(_) => c.to_string(),
                 })
                 .collect::<Vec<_>>()
-                .join(separator)
+                .join(delimiter)
         );
     }
 }
