@@ -16,7 +16,7 @@ struct Cli {
     #[arg(short, long, default_value = "\t")]
     delimiter: String,
 
-    /// Specify which fields to convert to human readable format
+    /// Specify which fields to convert to human-readable format
     #[arg(short, long, default_value = "1")]
     fields: u8,
 }
