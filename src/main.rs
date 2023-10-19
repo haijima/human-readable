@@ -76,3 +76,26 @@ pub fn human_readable<T: Into<u128>>(bytes: T) -> String {
     }
     format!("{:.1}{}", size / BASE, "Y")
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_human_readable() {
+        assert_eq!(human_readable(0u8), "0B");
+        assert_eq!(human_readable(1u8), "1B");
+        assert_eq!(human_readable(1023u32), "1023B");
+        assert_eq!(human_readable(1024u32), "1.0K");
+        assert_eq!(human_readable(1025u32), "1.0K");
+        assert_eq!(human_readable(1048576u32), "1.0M");
+        assert_eq!(human_readable(1073741824u64), "1.0G");
+        assert_eq!(human_readable(1200000000u64), "1.1G");
+        assert_eq!(human_readable(1099511627776u64), "1.0T");
+        assert_eq!(human_readable(1125899906842624u64), "1.0P");
+        assert_eq!(human_readable(1152921504606846976u64), "1.0E");
+        assert_eq!(human_readable(1180591620717411303424u128), "1.0Z");
+        assert_eq!(human_readable(1208925819614629174706176u128), "1.0Y");
+        assert_eq!(human_readable(1237940039285380274899124224u128), "1024.0Y");
+    }
+}
