@@ -1,10 +1,14 @@
 use clap::Parser;
 use clap_verbosity_flag::{InfoLevel, Verbosity};
+use std::fs::File;
 use std::io::{stdin, BufRead, BufReader};
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
+    #[arg(value_name = "FILE", help = "File to read, if empty read from stdin")]
+    filename: Option<String>,
+
     #[command(flatten)]
     verbose: Verbosity<InfoLevel>,
 
@@ -19,7 +23,18 @@ struct Cli {
 
 fn main() {
     let cli = Cli::parse();
-    read(BufReader::new(stdin().lock()), &cli.delimiter, cli.fields);
+
+    let buf_reader: BufReader<Box<dyn std::io::Read>> = match cli.filename {
+        None => BufReader::new(Box::new(stdin().lock())),
+        Some(f) => match File::open(f) {
+            Ok(r) => BufReader::new(Box::new(r)),
+            Err(err) => {
+                eprintln!("{}", err);
+                return;
+            }
+        },
+    };
+    read(buf_reader, &cli.delimiter, cli.fields);
 }
 
 fn read<R: BufRead>(buf_reader: R, delimiter: &str, fields: u8) {
