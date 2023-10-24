@@ -57,21 +57,15 @@ fn read<R: BufRead>(buf_reader: R, delimiter: &str, fields: usize) {
     }
 }
 
-const BASE: f64 = 1024_f64;
-const UNITS: [&str; 5] = ["K", "M", "G", "T", "P"];
+const UNITS: [&str; 7] = ["B", "K", "M", "G", "T", "P", "E"];
 
 pub fn human_readable<T: Into<u64>>(bytes: T) -> String {
-    let mut size = bytes.into() as f64;
-    if size < BASE {
+    let size = bytes.into() as f64;
+    let i = size.log(1024_f64).floor() as usize;
+    if i == 0 {
         return format!("{}{}", size, "B");
     }
-    for unit in UNITS {
-        size /= BASE;
-        if size < BASE {
-            return format!("{:.1}{}", size, unit);
-        }
-    }
-    format!("{:.1}{}", size / BASE, "E")
+    format!("{:.1}{}", size / (1u64 << (10 * i)) as f64, UNITS[i])
 }
 
 #[cfg(test)]
