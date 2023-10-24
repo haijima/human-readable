@@ -107,12 +107,12 @@ pub fn human_readable<T: Into<u64>>(bytes: T, unit: &Unit, precision: usize) -> 
     if i == 0 {
         return format!("{}{}", size, "B");
     }
-    return format!(
+    format!(
         "{:.prec$}{}",
         size / (1u64 << (10 * i)) as f64,
         UNITS[i],
         prec = precision
-    );
+    )
 }
 
 #[cfg(test)]
