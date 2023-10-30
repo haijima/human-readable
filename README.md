@@ -19,7 +19,7 @@ hr [OPTIONS] [FILE]
 ```
 -d, --delimiter <DELIMITER>  Use <DELIMITER> as the field delimiter [default: "\t"]
 -f, --fields <FIELDS>        Specify which fields to convert to human-readable format [default: 1]
--u, --unit <UNIT>            Specify which unit to use [default: auto] [possible values: auto, byte, kilo, mega, giga, tera, peta, exa]
+-u, --unit <UNIT>            Specify which unit to use [possible values: byte, kilo, mega, giga, tera, peta, exa]
 -p, --precision <PRECISION>  Decimal precision of the output [default: 1]
 -h, --help                   Print help
 -V, --version                Print version

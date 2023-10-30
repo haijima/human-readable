@@ -2,11 +2,10 @@ use std::fmt::{Display, Formatter, Result};
 
 use clap::ValueEnum;
 
-#[derive(Debug, Clone, Default, PartialEq, ValueEnum)]
+#[derive(Debug, Clone, PartialEq, ValueEnum)]
+#[repr(u8)]
 pub enum Unit {
-    #[default]
-    Auto,
-    Byte,
+    Byte = 0,
     Kilo,
     Mega,
     Giga,

@@ -20,8 +20,8 @@ struct Cli {
     fields: usize,
 
     /// Specify which unit to use
-    #[arg(short, long, value_enum, default_value_t = Unit::Auto)]
-    unit: Unit,
+    #[arg(short, long, value_enum)]
+    unit: Option<Unit>,
 
     /// Decimal precision of the output
     #[arg(short, long, default_value = "1")]
@@ -43,7 +43,7 @@ fn main() {
         buf_reader,
         &cli.delimiter,
         cli.fields,
-        &cli.unit,
+        cli.unit,
         cli.precision,
     );
 }
