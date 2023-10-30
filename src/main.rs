@@ -17,7 +17,7 @@ struct Cli {
 
     /// Specify which fields to convert to human-readable format
     #[arg(short, long, default_value = "1")]
-    fields: usize,
+    fields: Vec<usize>,
 
     /// Specify which unit to use
     #[arg(short, long, value_enum)]

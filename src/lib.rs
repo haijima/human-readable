@@ -7,7 +7,7 @@ mod unit;
 pub fn read<R: BufRead>(
     buf_reader: R,
     delimiter: &str,
-    fields: usize,
+    fields: Vec<usize>,
     unit: Option<Unit>,
     precision: usize,
 ) {
@@ -18,7 +18,7 @@ pub fn read<R: BufRead>(
                 .split(delimiter)
                 .enumerate()
                 .map(|(i, c)| {
-                    if i + 1 == fields {
+                    if fields.contains(&(i + 1)) {
                         match c.parse::<u64>() {
                             Ok(n) => human_readable(n, unit.clone(), precision),
                             Err(_) => c.to_string(),
