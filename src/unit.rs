@@ -17,6 +17,6 @@ pub enum Unit {
 impl Display for Unit {
     fn fmt(&self, f: &mut Formatter) -> Result {
         let raw = format!("{:?}", self);
-        write!(f, "{}", raw.to_uppercase())
+        write!(f, "{}", raw.chars().nth(0).unwrap().to_uppercase())
     }
 }

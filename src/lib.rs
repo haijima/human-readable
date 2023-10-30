@@ -33,7 +33,15 @@ pub fn read<R: BufRead>(
     }
 }
 
-const UNITS: [&str; 7] = ["B", "K", "M", "G", "T", "P", "E"];
+const UNITS: [&Unit; 7] = [
+    &Unit::Byte,
+    &Unit::Kilo,
+    &Unit::Mega,
+    &Unit::Giga,
+    &Unit::Tera,
+    &Unit::Peta,
+    &Unit::Exa,
+];
 
 pub fn human_readable<T: Into<u64>>(bytes: T, unit: Option<Unit>, precision: usize) -> String {
     let size = bytes.into() as f64;
@@ -43,7 +51,7 @@ pub fn human_readable<T: Into<u64>>(bytes: T, unit: Option<Unit>, precision: usi
     };
 
     if i == 0 {
-        return format!("{}{}", size, "B");
+        return format!("{}B", size);
     }
     format!(
         "{:.prec$}{}",
