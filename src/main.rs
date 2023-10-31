@@ -18,7 +18,7 @@ struct Cli {
     delimiter: String,
 
     /// Specify which fields to convert to human-readable format
-    #[arg(short, long, default_value = "1")]
+    #[arg(short, long, default_value = "1", value_delimiter = ',')]
     fields: Vec<usize>,
 
     /// Specify which unit to use
