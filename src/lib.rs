@@ -10,10 +10,18 @@ mod unit;
 pub fn read<R: BufRead>(buf_reader: R, config: Config) {
     let f = |(i, c): (usize, &str)| match (config.fields.contains(&(i + 1)), c.parse::<u64>()) {
         (true, Ok(n)) => human_readable(n, &config.format),
+        (true, Err(e)) => {
+            log::warn!("Failed to parse \"{}\": {}", c, e);
+            c.to_string()
+        }
         (_, _) => c.to_string(),
     };
 
     for line in buf_reader.lines() {
+        if let Err(e) = line {
+            log::error!("{}", e);
+            continue;
+        }
         println!(
             "{}",
             line.unwrap()

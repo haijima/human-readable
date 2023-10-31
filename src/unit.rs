@@ -36,6 +36,10 @@ impl Unit {
     }
 
     pub fn auto(byte_size: f64) -> Self {
+        if byte_size < 0f64 {
+            log::error!("byte_size shoud be positive. but: {}", byte_size);
+            return Unit::default();
+        }
         match byte_size.log(1024_f64).floor() as u8 {
             0 => Unit::Byte,
             1 => Unit::Kilo,
@@ -44,7 +48,10 @@ impl Unit {
             4 => Unit::Tera,
             5 => Unit::Peta,
             6 => Unit::Exa,
-            _ => Unit::default(), // Unit::Byte
+            _ => {
+                log::warn!("unexpected byte size: {}", byte_size);
+                Unit::default() // Unit::Byte
+            }
         }
     }
 }

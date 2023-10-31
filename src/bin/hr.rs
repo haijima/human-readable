@@ -43,9 +43,9 @@ fn main() {
     init_logger(cli.verbose.log_level_filter());
 
     let buf_reader: BufReader<Box<dyn std::io::Read>> = match cli.filename {
-        Some(f) => match File::open(f) {
+        Some(f) => match File::open(&f) {
             Ok(r) => BufReader::new(Box::new(r)), // Open file and read from it
-            Err(err) => return eprintln!("{}", err), // Print error and exit if file cannot be opened
+            Err(err) => return log::error!("[filename=\"{}\"] {}", &f, err), // Print error and exit if file cannot be opened
         },
         None => BufReader::new(Box::new(stdin().lock())), // Use stdin if no file is specified
     };
