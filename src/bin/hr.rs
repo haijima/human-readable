@@ -63,7 +63,8 @@ fn init_logger(level_filter: log::LevelFilter) {
             writeln!(
                 buf,
                 "{}: {}",
-                buf.default_styled_level(record.level()),
+                buf.default_level_style(record.level())
+                    .value(record.level().to_string().to_lowercase()),
                 record.args(),
             )
         })
