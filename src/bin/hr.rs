@@ -3,11 +3,15 @@ use std::io::{stdin, BufReader, Write};
 
 use clap::Parser;
 use clap_verbosity_flag::Verbosity;
+use shadow_rs::shadow;
 
+use crate::build::CLAP_LONG_VERSION;
 use hrdbl::Unit;
 
+shadow!(build);
+
 #[derive(Debug, Parser)]
-#[command(author, version, about, long_about = None)]
+#[command(name = "hr", author, version, about, long_about = None, long_version = CLAP_LONG_VERSION)]
 struct Cli {
     /// File to read, if empty read from stdin
     #[arg(value_name = "FILE")]
