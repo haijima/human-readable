@@ -21,6 +21,8 @@ hr [OPTIONS] [FILE]
 -f, --fields <FIELDS>        Specify which fields to convert to human-readable format [default: 1]
 -u, --unit <UNIT>            Specify which unit to use [possible values: byte, kilo, mega, giga, tera, peta, exa]
 -p, --precision <PRECISION>  Decimal precision of the output [default: 1]
+-v, --verbose...             More output per occurrence
+-q, --quiet...               Less output per occurrence
 -h, --help                   Print help
 -V, --version                Print version
 ```
@@ -50,6 +52,12 @@ If you're a macOS user, you can install with [Homebrew](https://brew.sh/).
 
 ``` bash
 brew install haijima/tap/hr
+```
+
+If you're a Rust user, you can install with [Cargo](https://doc.rust-lang.org/cargo/).
+
+``` bash
+cargo install --git https://github.com/haijima/human-readable.git
 ```
 
 Or you can download precompiled binaries from [releases](https://github.com/haijima/human-readable/releases).
