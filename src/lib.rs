@@ -8,22 +8,18 @@ mod config;
 mod unit;
 
 pub fn read<R: BufRead>(buf_reader: R, config: Config) {
+    let f = |(i, c): (usize, &str)| match (config.fields.contains(&(i + 1)), c.parse::<u64>()) {
+        (true, Ok(n)) => human_readable(n, &config.format),
+        (_, _) => c.to_string(),
+    };
+
     for line in buf_reader.lines() {
         println!(
             "{}",
             line.unwrap()
                 .split(&config.delimiter)
                 .enumerate()
-                .map(|(i, c)| {
-                    if &config.fields.contains(&(i + 1)) {
-                        match c.parse::<u64>() {
-                            Ok(n) => human_readable(n, &config.format),
-                            Err(_) => c.to_string(),
-                        }
-                    } else {
-                        c.to_string()
-                    }
-                })
+                .map(f)
                 .collect::<Vec<_>>()
                 .join(&config.delimiter)
         );
