@@ -30,32 +30,13 @@ pub fn read<R: BufRead>(buf_reader: R, config: Config) {
     }
 }
 
-const UNITS: [&Unit; 7] = [
-    &Unit::Byte,
-    &Unit::Kilo,
-    &Unit::Mega,
-    &Unit::Giga,
-    &Unit::Tera,
-    &Unit::Peta,
-    &Unit::Exa,
-];
-
 pub fn human_readable<T: Into<u64>>(bytes: T, format: &Format) -> String {
     let size = bytes.into() as f64;
-    let i = match &format.unit {
-        Some(u) => u.clone() as usize,
-        None => size.log(1024_f64).floor() as usize,
-    };
-
-    if i == 0 {
-        return format!("{}B", size);
+    let u = format.unit.clone().unwrap_or_else(|| Unit::auto(size));
+    if u == Unit::Byte {
+        return format!("{}{}", size, u);
     }
-    format!(
-        "{:.prec$}{}",
-        size / (1u64 << (10 * i)) as f64,
-        UNITS[i],
-        prec = &format.precision
-    )
+    format!("{:.n$}{}", u.apply(size), u, n = format.precision)
 }
 
 #[cfg(test)]
