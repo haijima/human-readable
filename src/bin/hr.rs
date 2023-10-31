@@ -4,7 +4,7 @@ use std::io::{stdin, BufReader, Write};
 use clap::Parser;
 use clap_verbosity_flag::Verbosity;
 
-use hr::Unit;
+use hrdbl::Unit;
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
@@ -46,9 +46,9 @@ fn main() {
         None => BufReader::new(Box::new(stdin().lock())), // Use stdin if no file is specified
     };
 
-    hr::read(
+    hrdbl::read(
         buf_reader,
-        hr::Config::new(cli.delimiter, cli.fields, cli.unit, cli.precision),
+        hrdbl::Config::new(cli.delimiter, cli.fields, cli.unit, cli.precision),
     );
 }
 

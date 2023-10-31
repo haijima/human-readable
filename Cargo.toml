@@ -1,5 +1,5 @@
 [package]
-name = "hr"
+name = "hrdbl"
 version = "0.0.3"
 edition = "2021"
 authors = ["haijima <k.haijima@gmail.com>"]
