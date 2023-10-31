@@ -8,6 +8,7 @@ mod config;
 mod unit;
 
 pub fn read<R: BufRead>(buf_reader: R, config: Config) {
+    log::debug!("{:?}", &config);
     let f = |(i, c): (usize, &str)| match (config.fields.contains(&(i + 1)), c.parse::<u64>()) {
         (true, Ok(n)) => human_readable(n, &config.format),
         (true, Err(e)) => {
@@ -37,6 +38,13 @@ pub fn read<R: BufRead>(buf_reader: R, config: Config) {
 pub fn human_readable<T: Into<u64>>(bytes: T, format: &Format) -> String {
     let size = bytes.into() as f64;
     let u = format.unit.clone().unwrap_or_else(|| Unit::auto(size));
+    log::trace!(
+        "bytes: {}, unit: {:?}->{:?}, precision: {}",
+        size,
+        format.unit,
+        u,
+        format.precision,
+    );
     if u == Unit::Byte {
         return format!("{}{}", size, u);
     }

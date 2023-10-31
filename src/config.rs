@@ -1,11 +1,13 @@
 use super::unit;
 
+#[derive(Debug, Clone)]
 pub struct Config {
     pub delimiter: String,
     pub fields: Vec<usize>,
     pub format: Format,
 }
 
+#[derive(Debug, Clone)]
 pub struct Format {
     pub unit: Option<unit::Unit>,
     pub precision: usize,

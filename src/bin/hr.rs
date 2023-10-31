@@ -3,6 +3,7 @@ use std::io::{stdin, BufReader, Write};
 
 use clap::Parser;
 use clap_verbosity_flag::Verbosity;
+use log::Level;
 use shadow_rs::shadow;
 
 use crate::build::CLAP_LONG_VERSION;
@@ -41,13 +42,20 @@ fn main() {
     let cli = Cli::parse();
 
     init_logger(cli.verbose.log_level_filter());
+    log::debug!("{:?}", cli);
 
     let buf_reader: BufReader<Box<dyn std::io::Read>> = match cli.filename {
         Some(f) => match File::open(&f) {
-            Ok(r) => BufReader::new(Box::new(r)), // Open file and read from it
+            Ok(r) => {
+                log::info!("Open file: {}", &f);
+                BufReader::new(Box::new(r)) // Open file and read from it
+            }
             Err(err) => return log::error!("[filename=\"{}\"] {}", &f, err), // Print error and exit if file cannot be opened
         },
-        None => BufReader::new(Box::new(stdin().lock())), // Use stdin if no file is specified
+        None => {
+            log::info!("Read from stdin...");
+            BufReader::new(Box::new(stdin().lock())) // Use stdin if no file is specified
+        }
     };
 
     hrdbl::read(
@@ -59,14 +67,27 @@ fn main() {
 fn init_logger(level_filter: log::LevelFilter) {
     env_logger::Builder::new()
         .filter_level(level_filter)
-        .format(|buf, record| {
-            writeln!(
-                buf,
-                "{}: {}",
-                buf.default_level_style(record.level())
-                    .value(record.level().to_string().to_lowercase()),
-                record.args(),
-            )
+        .format(|buf, record| match record.level() {
+            Level::Error | Level::Warn | Level::Info => {
+                writeln!(
+                    buf,
+                    "{:>5}: {}",
+                    buf.default_level_style(record.level())
+                        .value(record.level().to_string().to_lowercase()),
+                    record.args(),
+                )
+            }
+            Level::Debug | Level::Trace => {
+                writeln!(
+                    buf,
+                    "{:>5}: {} [{}:{}]",
+                    buf.default_level_style(record.level())
+                        .value(record.level().to_string().to_lowercase()),
+                    record.args(),
+                    record.file().unwrap_or("unknown"),
+                    record.line().unwrap_or(0),
+                )
+            }
         })
         .init();
 }
