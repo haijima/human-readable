@@ -1,26 +1,23 @@
 use std::io::BufRead;
 
+use crate::config::Format;
+pub use config::Config;
 pub use unit::Unit;
 
+mod config;
 mod unit;
 
-pub fn read<R: BufRead>(
-    buf_reader: R,
-    delimiter: &str,
-    fields: Vec<usize>,
-    unit: Option<Unit>,
-    precision: usize,
-) {
+pub fn read<R: BufRead>(buf_reader: R, config: Config) {
     for line in buf_reader.lines() {
         println!(
             "{}",
             line.unwrap()
-                .split(delimiter)
+                .split(&config.delimiter)
                 .enumerate()
                 .map(|(i, c)| {
-                    if fields.contains(&(i + 1)) {
+                    if &config.fields.contains(&(i + 1)) {
                         match c.parse::<u64>() {
-                            Ok(n) => human_readable(n, unit.clone(), precision),
+                            Ok(n) => human_readable(n, &config.format),
                             Err(_) => c.to_string(),
                         }
                     } else {
@@ -28,7 +25,7 @@ pub fn read<R: BufRead>(
                     }
                 })
                 .collect::<Vec<_>>()
-                .join(delimiter)
+                .join(&config.delimiter)
         );
     }
 }
@@ -43,10 +40,10 @@ const UNITS: [&Unit; 7] = [
     &Unit::Exa,
 ];
 
-pub fn human_readable<T: Into<u64>>(bytes: T, unit: Option<Unit>, precision: usize) -> String {
+pub fn human_readable<T: Into<u64>>(bytes: T, format: &Format) -> String {
     let size = bytes.into() as f64;
-    let i = match unit {
-        Some(u) => u as usize,
+    let i = match &format.unit {
+        Some(u) => u.clone() as usize,
         None => size.log(1024_f64).floor() as usize,
     };
 
@@ -57,7 +54,7 @@ pub fn human_readable<T: Into<u64>>(bytes: T, unit: Option<Unit>, precision: usi
         "{:.prec$}{}",
         size / (1u64 << (10 * i)) as f64,
         UNITS[i],
-        prec = precision
+        prec = &format.precision
     )
 }
 
@@ -67,18 +64,27 @@ mod tests {
 
     #[test]
     fn test_human_readable() {
-        assert_eq!(human_readable(0u8, None, 1), "0B");
-        assert_eq!(human_readable(1u8, None, 1), "1B");
-        assert_eq!(human_readable(1023u32, None, 1), "1023B");
-        assert_eq!(human_readable(1024u32, None, 1), "1.0K");
-        assert_eq!(human_readable(1025u32, None, 1), "1.0K");
-        assert_eq!(human_readable(1048576u32, None, 1), "1.0M");
-        assert_eq!(human_readable(1073741824u64, None, 1), "1.0G");
-        assert_eq!(human_readable(1200000000u64, None, 1), "1.1G");
-        assert_eq!(human_readable(1099511627776u64, None, 1), "1.0T");
-        assert_eq!(human_readable(1125899906842624u64, None, 1), "1.0P");
-        assert_eq!(human_readable(1152921504606846975u64, None, 1), "1.0E");
-        assert_eq!(human_readable(1152921504606846976u64, None, 1), "1.0E");
-        assert_eq!(human_readable(u64::MAX, None, 1), "16.0E");
+        assert_eq!(human_readable(0u8, &Format::default()), "0B");
+        assert_eq!(human_readable(1u8, &Format::default()), "1B");
+        assert_eq!(human_readable(1023u32, &Format::default()), "1023B");
+        assert_eq!(human_readable(1024u32, &Format::default()), "1.0K");
+        assert_eq!(human_readable(1025u32, &Format::default()), "1.0K");
+        assert_eq!(human_readable(1048576u32, &Format::default()), "1.0M");
+        assert_eq!(human_readable(1073741824u64, &Format::default()), "1.0G");
+        assert_eq!(human_readable(1200000000u64, &Format::default()), "1.1G");
+        assert_eq!(human_readable(1099511627776u64, &Format::default()), "1.0T");
+        assert_eq!(
+            human_readable(1125899906842624u64, &Format::default()),
+            "1.0P"
+        );
+        assert_eq!(
+            human_readable(1152921504606846975u64, &Format::default()),
+            "1.0E"
+        );
+        assert_eq!(
+            human_readable(1152921504606846976u64, &Format::default()),
+            "1.0E"
+        );
+        assert_eq!(human_readable(u64::MAX, &Default::default()), "16.0E");
     }
 }

@@ -41,9 +41,6 @@ fn main() {
 
     hr::read(
         buf_reader,
-        &cli.delimiter,
-        cli.fields,
-        cli.unit,
-        cli.precision,
+        hr::Config::new(cli.delimiter, cli.fields, cli.unit, cli.precision),
     );
 }
