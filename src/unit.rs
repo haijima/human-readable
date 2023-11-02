@@ -22,6 +22,16 @@ impl Display for Unit {
 }
 
 impl Unit {
+    /// Convert bytes to the specified unit
+    ///
+    /// # Arguments
+    ///
+    /// * `byte_size` - The number of bytes to convert
+    ///
+    /// # Returns
+    ///
+    /// The converted number of bytes
+    ///
     pub fn apply(&self, byte_size: f64) -> f64 {
         let base = 1024_u64.pow(match &self {
             Unit::Byte => 0,
@@ -35,6 +45,16 @@ impl Unit {
         byte_size / base as f64
     }
 
+    /// Automatically determine the unit to use
+    ///
+    /// # Arguments
+    ///
+    /// * `byte_size` - The number of bytes to convert
+    ///
+    /// # Returns
+    ///
+    /// The unit to use
+    ///
     pub fn auto(byte_size: f64) -> Self {
         if byte_size < 0f64 {
             log::error!("byte_size shoud be positive. but: {}", byte_size);

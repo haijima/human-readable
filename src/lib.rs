@@ -7,6 +7,28 @@ pub use unit::Unit;
 mod config;
 mod unit;
 
+/// Read from `buf_reader` and print the human-readable representation of the specified fields
+/// to stdout.
+///
+/// # Examples
+///
+/// ```
+/// # use std::io::BufReader;
+/// # use hrdbl::{read, Config};
+/// let buf_reader = BufReader::new(Box::new("1048576\tfoo\t123\n".as_bytes()));
+/// read(buf_reader, Config::default());
+/// // Output:
+/// // 1.0M	foo	123
+/// ```
+///
+/// # Arguments
+///
+/// * `buf_reader` - The `BufRead` to read from
+/// * `config` - The `Config` to use
+///
+/// # See also
+///
+/// [`Config`](struct.Config.html)
 pub fn read<R: BufRead>(buf_reader: R, config: Config) {
     log::debug!("{:?}", &config);
     let f = |(i, c): (usize, &str)| match (config.fields.contains(&(i + 1)), c.parse::<u64>()) {
@@ -35,6 +57,34 @@ pub fn read<R: BufRead>(buf_reader: R, config: Config) {
     }
 }
 
+/// Convert bytes to human-readable format
+///
+/// # Examples
+/// ```
+/// # use hrdbl::{human_readable, Unit};
+/// assert_eq!(human_readable(1234567890u32, &Default::default()), "1.1G");
+/// ```
+///
+/// # Arguments
+///
+/// * `bytes` - The number of bytes to convert
+/// * `format` - The format to use
+///
+/// # Returns
+///
+/// A `String` containing the human-readable representation of `bytes`.
+///
+/// # Notes
+///
+/// The `format.unit` is the unit to use. If `format.unit` is `None`, the unit is automatically determined.
+///
+/// # See also
+///
+/// [`Config`](struct.Config.html)
+///
+/// [`Format`](struct.Format.html)
+///
+/// [`Unit`](enum.Unit.html)
 pub fn human_readable<T: Into<u64>>(bytes: T, format: &Format) -> String {
     let size = bytes.into() as f64;
     let u = format.unit.clone().unwrap_or_else(|| Unit::auto(size));

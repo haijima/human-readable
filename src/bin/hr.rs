@@ -12,13 +12,14 @@ use hrdbl::Unit;
 shadow!(build);
 
 #[derive(Debug, Parser)]
-#[command(name = "hr", author, version, about, long_about = None, long_version = CLAP_LONG_VERSION)]
+#[command(name = "hr", about, long_about = None, version, long_version = CLAP_LONG_VERSION)]
 struct Cli {
     /// File to read, if empty read from stdin
     #[arg(value_name = "FILE")]
     filename: Option<String>,
 
     /// Use <DELIMITER> as the field delimiter
+    #[allow(rustdoc::invalid_html_tags)]
     #[arg(short, long, default_value = "\t")]
     delimiter: String,
 
