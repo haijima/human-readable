@@ -47,10 +47,10 @@ fn main() {
     let buf_reader: BufReader<Box<dyn std::io::Read>> = match cli.filename {
         Some(f) => match File::open(&f) {
             Ok(r) => {
-                log::info!("Open file: {}", &f);
+                log::info!("Open file: \"{}\"", &f);
                 BufReader::new(Box::new(r)) // Open file and read from it
             }
-            Err(err) => return log::error!("[filename=\"{}\"] {}", &f, err), // Print error and exit if file cannot be opened
+            Err(err) => return log::error!("Failed to open file: \"{}\": {}", &f, err), // Print error and exit if file cannot be opened
         },
         None => {
             log::info!("Read from stdin...");
