@@ -48,7 +48,10 @@ pub fn human_readable<T: Into<u64>>(bytes: T, format: &Format) -> String {
     if u == Unit::Byte {
         return format!("{}{}", size, u);
     }
-    format!("{:.n$}{}", u.apply(size), u, n = format.precision)
+    if format.precision <= 20 {
+        return format!("{:.n$}{}", u.apply(size), u, n = format.precision);
+    }
+    format!("{:.20}{}", u.apply(size), u)
 }
 
 #[cfg(test)]
