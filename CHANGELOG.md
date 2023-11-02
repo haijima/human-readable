@@ -15,4 +15,3 @@
 ### Bug Fixes
 
 * Avoid panic when precision &gt; 20 ([1c6fbf1](https://github.com/haijima/human-readable/commit/1c6fbf173cf822a216484d2c54c81849f15f8c9f))
-* Fix tabs in doc comment ([5e9fe68](https://github.com/haijima/human-readable/commit/5e9fe68c6a3d05d26269822d58b8e0fc256e91bb))
