@@ -55,3 +55,32 @@ impl Unit {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_unit_apply() {
+        assert_eq!(Unit::Byte.apply(1073741824.0), 1073741824.0);
+        assert_eq!(Unit::Kilo.apply(1073741824.0), 1048576.0);
+        assert_eq!(Unit::Mega.apply(1073741824.0), 1024.0);
+        assert_eq!(Unit::Giga.apply(1073741824.0), 1.0);
+        assert_eq!(Unit::Tera.apply(1073741824.0), 0.0009765625);
+        assert_eq!(Unit::Peta.apply(1073741824.0), 0.00000095367431640625);
+        assert_eq!(Unit::Exa.apply(1073741824.0), 0.0000000009313225746154785);
+    }
+
+    #[test]
+    fn test_unit_auto() {
+        assert_eq!(Unit::auto(0_f64), Unit::Byte);
+        assert_eq!(Unit::auto(1023_f64), Unit::Byte);
+        assert_eq!(Unit::auto(1024_f64), Unit::Kilo);
+        assert_eq!(Unit::auto((1u64 << 20) as f64), Unit::Mega);
+        assert_eq!(Unit::auto((1u64 << 30) as f64), Unit::Giga);
+        assert_eq!(Unit::auto((1u64 << 40) as f64), Unit::Tera);
+        assert_eq!(Unit::auto((1u64 << 50) as f64), Unit::Peta);
+        assert_eq!(Unit::auto((1u64 << 60) as f64), Unit::Exa);
+        assert_eq!(Unit::auto(f64::MAX), Unit::default());
+    }
+}
