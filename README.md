@@ -1,6 +1,10 @@
-# human-readable
+# hrdbl: human-readable
+
+[![CI Status](https://github.com/haijima/human-readable/workflows/CI/badge.svg)](https://github.com/haijima/human-readable/actions)
 
 Converts byte size into human-readable format
+
+[rust-doc](https://haijima.github.io/human-readable/hrdbl/)
 
 ## Usage
 
