@@ -1,6 +1,6 @@
 [package]
 name = "hrdbl"
-version = "0.0.5"
+version = "0.1.0"
 edition = "2021"
 authors = ["haijima <k.haijima@gmail.com>"]
 description = "Converts byte size into human readable format"
