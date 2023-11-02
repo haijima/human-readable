@@ -18,7 +18,7 @@ mod unit;
 /// let buf_reader = BufReader::new(Box::new("1048576\tfoo\t123\n".as_bytes()));
 /// read(buf_reader, Config::default());
 /// // Output:
-/// // 1.0M	foo	123
+/// // 1.0M    foo    123
 /// ```
 ///
 /// # Arguments
