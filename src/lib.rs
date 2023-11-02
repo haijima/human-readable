@@ -1,7 +1,7 @@
 use std::io::BufRead;
 
-use crate::config::Format;
 pub use config::Config;
+pub use config::Format;
 pub use unit::Unit;
 
 mod config;
