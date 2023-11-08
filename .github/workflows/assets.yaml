@@ -1,0 +1,66 @@
+name: Assets
+
+on:
+  release:
+    types: [ created ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: release ${{ matrix.target }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-pc-windows-gnu
+            archive: tar.gz
+          - target: x86_64-unknown-linux-musl
+            archive: tar.gz tar.xz
+          - target: x86_64-apple-darwin
+            archive: tar.gz
+    steps:
+      - uses: actions/checkout@master
+      - name: Compile and release
+        uses: rust-build/rust-build.action@v1.4.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          RUSTTARGET: ${{ matrix.target }}
+          ARCHIVE_TYPES: ${{ matrix.archive }}
+          TOOLCHAIN_VERSION: 1.72.1
+  build-windows-msvc:
+    name: release windows msvc
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Build
+        run: |
+          cargo build --release
+      - name: tar
+        run: tar --directory=target/release -cf archive.tar.gz hr.exe
+      - name: upload
+        run: |
+          $id = gh api -H "Accept: application/vnd.github+json" /repos/haijima/human-readable/releases/tags/${{ github.ref_name }} --jq .id
+          curl --fail-with-body -sS  -X POST --data-binary "@archive.tar.gz" -H 'Content-Type: application/octet-stream' -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://uploads.github.com/repos/haijima/human-readable/releases/$id/assets?name=human-readable_${{ github.ref_name }}_x86_64-pc-windows-msvc.tar.gz"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  build-macos-arm:
+    name: release mac os arm
+    runs-on: macos-12
+    steps:
+      - uses: actions/checkout@master
+      - name: check toolchain
+        run: rustup default
+      - name: Build
+        run: |
+          rustup toolchain install stable-aarch64-apple-darwin
+          rustup target add aarch64-apple-darwin
+          cargo build --release --target aarch64-apple-darwin
+      - name: tar
+        run: tar --directory=target/aarch64-apple-darwin/release -cf archive.tar.gz hr
+      - name: upload
+        run: |
+          $id = gh api -H "Accept: application/vnd.github+json" /repos/haijima/human-readable/releases/tags/${{ github.ref_name }} --jq .id
+          curl --fail-with-body -sS  -X POST --data-binary "@archive.tar.gz" -H 'Content-Type: application/octet-stream' -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://uploads.github.com/repos/haijima/human-readable/releases/$id/assets?name=human-readable_${{ github.ref_name }}_aarch64-apple-darwin.tar.gz"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

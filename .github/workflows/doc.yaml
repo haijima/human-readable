@@ -1,8 +1,8 @@
-name: doc
+name: Doc
 
 on:
   release:
-    types: [ published ]
+    types: [ created ]
 
 jobs:
   doc:
